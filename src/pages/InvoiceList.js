@@ -1,20 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Table, Tbody, Tr, Th, Td, Button } from "@chakra-ui/react";
+import { Table, Tbody, Tr, Th, Td, Button, Heading, Box } from "@chakra-ui/react";
 import axios from "axios";
 import UpdateInvoiceModal from "../components/UpdateInvoiceModal";
 
 function Invoices() {
   const [invoices, setInvoices] = useState([]);
-  const [selectedInvoice, setSelectedInvoice] = useState({
-        id: 0,
-        date: new Date().toLocaleDateString("en-CA"),
-        customerName: "",
-        productName: "",
-        productQty: 0,
-        productPrice: 0,
-        total: 0,
-  })
+  const [isOpenModal, setIsOpenModal] = useState(false);
+  const [selectedInvoice, setSelectedInvoice] = useState(null)
   const navigate = useNavigate();
 
   const apiUrl = "http://localhost:3000";
@@ -41,15 +34,39 @@ function Invoices() {
   };
 
   const updateInvoice = (invoice) => {
+    setIsOpenModal(true)
     console.log(invoice)
     setSelectedInvoice(invoice)
   }
 
+  const handleUpdate = (updatedInvoice) => {
+    // Handle the update logic
+    setIsOpenModal(false);
+    console.log("Updated invoice", updatedInvoice)
+    setSelectedInvoice(null);
+  }
+
   return (
     <div>
-      <h1>Invoices Page</h1>
-    
-      <Table variant="striped" colorScheme="gray">
+      <Heading as="h1" textAlign='center' m={5}>Invoices Page</Heading>
+      <Box align="center" m={5}>
+        <Button colorScheme={'green'}  onClick={() => navigate("create")}>
+            Create Invoice
+        </Button>
+      </Box>
+      
+      {selectedInvoice && (
+        <UpdateInvoiceModal 
+            invoice={selectedInvoice} 
+            onUpdate={handleUpdate}
+            isOpen={isOpenModal}
+            setIsOpen={setIsOpenModal}
+        />
+      )}
+
+
+          
+      <Table variant="striped" colorScheme="gray" align="center">
         <thead>
           <Tr>
             <Th>Invoice Number</Th>
